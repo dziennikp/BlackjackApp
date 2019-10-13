@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Cards",
+        "repositoryURL": "https://github.com/dziennikp/cards.git",
+        "state": {
+          "branch": null,
+          "revision": "c4edbf0eaa76659dd5f8a5734e4711c3f6e993d9",
+          "version": "1.2.0"
+        }
+      },
+      {
+        "package": "SwiftFormat",
+        "repositoryURL": "https://github.com/nicklockwood/SwiftFormat",
+        "state": {
+          "branch": null,
+          "revision": "1f0d26082bee42490f286bee98133ae710be0032",
+          "version": "0.40.13"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
