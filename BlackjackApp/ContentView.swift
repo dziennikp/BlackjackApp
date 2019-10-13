@@ -11,22 +11,42 @@ import SwiftUI
 
 struct ContentView: View {
     let deckManager: DeckManager
+    
+    @State var dealerCards: [Card] = []
     @State var displayedCards: [Card] = []
-    @State var score = 0
+    @State var yourScore = 0
+    @State var dealerScore = 0
     @State var gameOver = false
+    @State var youAreWinner = false
+    
     var gameStatusLabel: String {
-        score == 21 ? "You won" : "You lost"
+        youAreWinner ? "You won" : "You lost"
     }
 
     var body: some View {
         VStack {
-            ForEach(displayedCards, id: \.self) { card in
-                CardView(card: card)
+            HStack {
+                VStack {
+                    Text("Your cards")
+                    ForEach(displayedCards, id: \Card.id) { card in
+                        CardView(card: card)
+                    }
+                    Text("Score: \(yourScore)").bold()
+                }
+                VStack {
+                    Text("Dealer cards")
+                    ForEach(dealerCards, id: \Card.id) { card in
+                        CardView(card: card)
+                    }
+                    Text("Score: \(dealerScore)").bold()
+
+                }
             }
-            Text("Score: \(score)").bold()
+            
             HStack {
                 Button(action: {
                     self.addCard()
+                    self.addCard(dealer: true)
                 }) {
                     Text("Add card")
                 }
@@ -45,18 +65,40 @@ struct ContentView: View {
         }
     }
 
-    func addCard() {
-        guard score < 21 else { return }
+    func addCard(dealer: Bool = false) {
+        guard !gameOver else { return }
         let nextCard = deckManager.nextCard()
-        displayedCards.append(nextCard)
-        score += nextCard.rank.rawValue
-        gameOver = score >= 21 ? true : false
+        if dealer {
+            dealerCards.append(nextCard)
+            dealerScore += nextCard.rank.rawValue
+        } else {
+            displayedCards.append(nextCard)
+            yourScore += nextCard.rank.rawValue
+        }
+        checkScore()
+    }
+    
+    func checkScore() {
+        gameOver = (yourScore >= 21 || dealerScore >= 21) ? true : false
+        guard gameOver else { return }
+        if yourScore < 21 && dealerScore > 21 {
+            youAreWinner = true
+        } else if yourScore < 21 && dealerScore < yourScore {
+            youAreWinner = true
+        } else if yourScore == 21 {
+            youAreWinner = true
+        } else {
+            youAreWinner = false
+        }
     }
 
     func reset() {
-        score = 0
+        yourScore = 0
+        dealerScore = 0
         displayedCards = []
+        dealerCards = []
         deckManager.shuffle()
+        youAreWinner = false
     }
 }
 
